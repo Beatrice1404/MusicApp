@@ -4,7 +4,33 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Artists</title>
+</head>
+<body>
+    <h1>Artists</h1>
+    @if (Model.Artists != null)
+    {
+        @foreach (var artist in Model.Artists)
+        {
+            <div>
+                <h2>@artist.Name</h2>
+                @foreach (var album in artist.Albums)
+                {
+                    <h3>@album.Title</h3>
+                    <p>@album.Description</p>
+                    <ul>
+                        @foreach (var song in album.Songs)
+                        {
+                            <li>@song.Title - @song.Length</li>
+                        }
+                    </ul>
+                }
+            </div>
+        }
+    }
+</body>
+</html>

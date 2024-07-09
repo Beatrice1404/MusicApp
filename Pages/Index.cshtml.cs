@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using MusicApp.Models;
+using MusicApp.Services;
 
 namespace MusicApp.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly MongoDBService _mongoDBService;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public List<Artist> Artists { get; set; } = new List<Artist>();
+
+        public IndexModel(MongoDBService mongoDBService)
         {
-            _logger = logger;
+            _mongoDBService = mongoDBService;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-
+            Artists = await _mongoDBService.GetAsync();
         }
     }
 }
