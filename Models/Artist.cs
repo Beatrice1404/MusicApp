@@ -8,30 +8,36 @@ namespace MusicApp.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }  // Proprietatea Id
+        public string Id { get; set; }
 
-        public string Name { get; set; }
-        public List<Album> Albums { get; set; }
+        public string name { get; set; }  
+
+        [BsonElement("albums")]
+        public List<Album> albums { get; set; } 
     }
 
     public class Album
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }  // Proprietatea Id
+        public string Id { get; set; }
 
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public List<Song> Songs { get; set; }
+        public string title { get; set; }
+
+        public string description { get; set; }
+
+        [BsonElement("songs")]
+        public List<Song> songs { get; set; }
     }
 
     public class Song
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }  // Proprietatea Id
+        public string Id { get; set; }
 
-        public string Title { get; set; }
-        public string Length { get; set; }
+        public string title { get; set; }
+
+        public string length { get; set; }
     }
 }

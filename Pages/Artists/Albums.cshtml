@@ -1,0 +1,16 @@
+﻿@page
+@model MusicApp.Pages.Artists.AlbumsModel
+@{
+    ViewData["Title"] = "Albums";
+}
+
+<h1>@Model.Artist.name - Albums</h1>
+
+<ul>
+    @foreach (var album in Model.Artist.albums)
+    {
+        <li>
+            <a asp-page="./AlbumDetails" asp-route-artistId="@Model.Artist.Id" asp-route-albumId="@album.Id">@album.title</a>
+        </li>
+    }
+</ul>

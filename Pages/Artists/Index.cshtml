@@ -1,0 +1,14 @@
+﻿@page
+@model MusicApp.Pages.Artists.IndexModel
+@{
+    ViewData["Title"] = "Artists";
+}
+
+<ul>
+    @foreach (var artist in Model.Artists)
+    {
+        <li>
+            <a asp-page="./Albums" asp-route-id="@artist.Id">@artist.name</a>
+        </li>
+    }
+</ul>

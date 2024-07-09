@@ -11,6 +11,15 @@ namespace MusicApp.Services
 
         public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings)
         {
+            if (mongoDBSettings.Value.ConnectionString == null)
+            {
+                throw new ArgumentNullException(nameof(mongoDBSettings.Value.ConnectionString));
+            }
+            if (mongoDBSettings.Value.DatabaseName == null)
+            {
+                throw new ArgumentNullException(nameof(mongoDBSettings.Value.DatabaseName));
+            }
+
             var mongoClient = new MongoClient(mongoDBSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(mongoDBSettings.Value.DatabaseName);
             _artistsCollection = mongoDatabase.GetCollection<Artist>("artists");

@@ -1,23 +1,22 @@
-using Microsoft.Extensions.Options;
 using MusicApp.Services;
 using MusicApp.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Adaug? serviciile în container.
 builder.Services.Configure<MongoDBSettings>(
-    builder.Configuration.GetSection("ConnectionStrings"));
+    builder.Configuration.GetSection("MongoDBSettings"));
 
 builder.Services.AddSingleton<MongoDBService>();
-
+builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configureaz? pipeline-ul de request-uri HTTP.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
@@ -28,6 +27,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Artists}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

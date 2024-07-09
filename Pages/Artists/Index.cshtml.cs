@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using MusicApp.Models;
 using MusicApp.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace MusicApp.Pages
+namespace MusicApp.Pages.Artists
 {
     public class IndexModel : PageModel
     {
