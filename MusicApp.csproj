@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Controllers\ArtistsController.cs" />
     <Content Include="Services\MongoDBService.cs" />
     <Content Include="Services\MongoDBSettings.cs" />
   </ItemGroup>
