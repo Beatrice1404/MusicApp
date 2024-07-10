@@ -1,0 +1,15 @@
+﻿@page "{artistId}/{albumId}"
+@model MusicApp.Pages.Albums.EditAlbumModel
+@{
+    ViewData["Title"] = "Edit Album";
+}
+
+<h1>Edit Album</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" name="title" value="@Model.Album.title" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

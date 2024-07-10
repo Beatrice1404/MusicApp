@@ -10,10 +10,10 @@ namespace MusicApp.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        public string name { get; set; }  
+        public string name { get; set; }
 
         [BsonElement("albums")]
-        public List<Album> albums { get; set; } 
+        public List<Album> albums { get; set; }
     }
 
     public class Album

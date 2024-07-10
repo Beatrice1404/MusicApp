@@ -1,0 +1,18 @@
+﻿@page "{artistId}/{albumId}"
+@model MusicApp.Pages.Albums.DeleteAlbumModel
+@{
+    ViewData["Title"] = "Delete Album";
+}
+
+<h1>Delete Album</h1>
+
+<h3>Are you sure you want to delete this album?</h3>
+<div>
+    <h4>@Model.Album.title</h4>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="Album.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-page="/Artists/Details" asp-route-id="@Model.ArtistId" class="btn btn-secondary">Cancel</a>
+</form>

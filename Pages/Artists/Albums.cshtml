@@ -10,7 +10,7 @@
     @foreach (var album in Model.Artist.albums)
     {
         <li>
-            <a asp-page="./AlbumDetails" asp-route-artistId="@Model.Artist.Id" asp-route-albumId="@album.Id">@album.title</a>
+            <a asp-page="./AlbumDetails" asp-route-albumTitle="@album.title">@album.title</a>
         </li>
     }
 </ul>
