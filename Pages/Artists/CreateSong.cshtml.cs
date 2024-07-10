@@ -4,7 +4,7 @@ using MusicApp.Models;
 using MusicApp.Services;
 using System.Threading.Tasks;
 
-namespace MusicApp.Pages.Songs
+namespace MusicApp.Pages.Artists
 {
     public class CreateSongModel : PageModel
     {
@@ -13,18 +13,21 @@ namespace MusicApp.Pages.Songs
         [BindProperty]
         public Song Song { get; set; }
 
-        public string ArtistId { get; set; }
+        [BindProperty(SupportsGet = true)]
         public string AlbumId { get; set; }
+
+        public Album Album { get; set; }
+
+        public string ArtistId { get; set; } // Ad?ug?m ArtistId ca proprietate
 
         public CreateSongModel(MongoDBService mongoDBService)
         {
             _mongoDBService = mongoDBService;
         }
 
-        public void OnGet(string artistId, string albumId)
+        public async Task OnGetAsync(string artistId, string albumId)
         {
-            ArtistId = artistId;
-            AlbumId = albumId;
+            Album = await _mongoDBService.GetAlbumByIdAsync(albumId);
         }
 
         public async Task<IActionResult> OnPostAsync(string artistId, string albumId)
@@ -36,7 +39,9 @@ namespace MusicApp.Pages.Songs
 
             await _mongoDBService.AddSongAsync(artistId, albumId, Song);
 
-            return RedirectToPage("/Artists/Details", new { id = artistId });
+            return RedirectToPage("/Artists/AlbumDetails", new { artistId = artistId, albumTitle = Album.title });
         }
+
+
     }
 }

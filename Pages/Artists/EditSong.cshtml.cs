@@ -4,7 +4,7 @@ using MusicApp.Models;
 using MusicApp.Services;
 using System.Threading.Tasks;
 
-namespace MusicApp.Pages.Songs
+namespace MusicApp.Pages.Artists
 {
     public class EditSongModel : PageModel
     {
@@ -13,9 +13,14 @@ namespace MusicApp.Pages.Songs
         [BindProperty]
         public Song Song { get; set; }
 
-        public string ArtistId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string SongId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string AlbumId { get; set; }
-        public string SongId { get; set; } // Adaug? aceast? proprietate pentru a p?stra songId
+
+        [BindProperty(SupportsGet = true)]
+        public string ArtistId { get; set; }
 
         public EditSongModel(MongoDBService mongoDBService)
         {
@@ -24,13 +29,8 @@ namespace MusicApp.Pages.Songs
 
         public async Task<IActionResult> OnGetAsync(string artistId, string albumId, string songId)
         {
-            ArtistId = artistId;
-            AlbumId = albumId;
-            SongId = songId; // P?streaz? songId
-
-            var artist = await _mongoDBService.GetArtistAsync(artistId);
-            var album = artist?.albums.FirstOrDefault(a => a.Id == albumId);
-            Song = album?.songs.FirstOrDefault(s => s.Id == songId);
+            // Ob?ine song-ul pe care dore?ti s?-l editezi
+            Song = await _mongoDBService.GetSongByTitleAsync( songId);
 
             if (Song == null)
             {
@@ -40,16 +40,17 @@ namespace MusicApp.Pages.Songs
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string artistId, string albumId, string songId)
+        public async Task<IActionResult> OnPostAsync(string artistId, string albumId)
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            await _mongoDBService.UpdateSongAsync(artistId, albumId, songId); // Trimite songId
+            await _mongoDBService.UpdateSongAsync(artistId, albumId, Song);
 
-            return RedirectToPage("/Artists/Details", new { id = artistId });
+            return RedirectToPage("/Artists/AlbumDetails", new { artistId = artistId, albumTitle = Song.title });
         }
+
     }
 }

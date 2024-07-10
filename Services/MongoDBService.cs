@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MusicApp.Models;
 using MusicApp.Settings;
@@ -29,12 +30,23 @@ namespace MusicApp.Services
             var artist = await _artistsCollection.Find(a => a.albums.Any(album => album.title == albumTitle)).FirstOrDefaultAsync();
             return artist?.albums.FirstOrDefault(album => album.title == albumTitle);
         }
-        public async Task<List<Artist>> GetArtistsAsync() => await _artistsCollection.Find(_ => true).ToListAsync();
-        public async Task<Artist> GetArtistAsync(string id) => await _artistsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-        public async Task CreateArtistAsync(Artist artist) => await _artistsCollection.InsertOneAsync(artist);
-        public async Task UpdateArtistAsync(string id, Artist artist) => await _artistsCollection.ReplaceOneAsync(x => x.Id == id, artist);
-        public async Task DeleteArtistAsync(string id) => await _artistsCollection.DeleteOneAsync(x => x.Id == id);
 
+        public async Task<Album> GetAlbumByIdAsync(string albumId)
+        {
+            var artist = await _artistsCollection.Find(a => a.albums.Any(album => album.Id == albumId)).FirstOrDefaultAsync();
+            return artist?.albums.FirstOrDefault(album => album.Id == albumId);
+        }
+
+
+        public async Task<List<Artist>> GetArtistsAsync() => await _artistsCollection.Find(_ => true).ToListAsync();
+
+        public async Task<Artist> GetArtistAsync(string id) => await _artistsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async Task CreateArtistAsync(Artist artist) => await _artistsCollection.InsertOneAsync(artist);
+
+        public async Task UpdateArtistAsync(string id, Artist artist) => await _artistsCollection.ReplaceOneAsync(x => x.Id == id, artist);
+
+        public async Task DeleteArtistAsync(string id) => await _artistsCollection.DeleteOneAsync(x => x.Id == id);
 
         public async Task AddAlbumAsync(string artistId, Album album)
         {
@@ -42,6 +54,12 @@ namespace MusicApp.Services
             await _artistsCollection.UpdateOneAsync(a => a.Id == artistId, update);
         }
 
+        public async Task UpdateAlbumAsync(string albumId, Album album)
+        {
+            var filter = Builders<Artist>.Filter.ElemMatch(a => a.albums, ab => ab.Id == albumId);
+            var update = Builders<Artist>.Update.Set("albums.$", album);
+            await _artistsCollection.UpdateOneAsync(filter, update);
+        }
 
         public async Task DeleteAlbumAsync(string artistId, string albumId)
         {
@@ -60,38 +78,34 @@ namespace MusicApp.Services
             await _artistsCollection.UpdateOneAsync(filter, update);
         }
 
-        public async Task UpdateAlbumAsync(string artistId, Album album)
-        {
-            var filter = Builders<Artist>.Filter.And(
-                Builders<Artist>.Filter.Eq(a => a.Id, artistId),
-                Builders<Artist>.Filter.ElemMatch(a => a.albums, ab => ab.Id == album.Id)
-            );
-            var update = Builders<Artist>.Update.Set(a => a.albums[-1], album);
-            await _artistsCollection.UpdateOneAsync(filter, update);
-        }
-
-        public async Task UpdateSongAsync(string artistId, string albumId, string songId)
+        public async Task UpdateSongAsync(string artistId, string albumId, Song song)
         {
             var filter = Builders<Artist>.Filter.And(
                 Builders<Artist>.Filter.Eq(a => a.Id, artistId),
                 Builders<Artist>.Filter.ElemMatch(a => a.albums, ab => ab.Id == albumId),
-                Builders<Artist>.Filter.ElemMatch(a => a.albums[-1].songs, s => s.Id == songId)
+                Builders<Artist>.Filter.ElemMatch(a => a.albums[-1].songs, s => s.Id == song.Id)
             );
 
-            var update = Builders<Artist>.Update.Set("albums.$.songs.$", Builders<Song>.Update.Set(s => s.Id, songId));
+            var update = Builders<Artist>.Update
+                .Set("albums.$[a].songs.$[s].title", song.title)
+                .Set("albums.$[a].songs.$[s].length", song.length);
 
-            await _artistsCollection.UpdateOneAsync(filter, update);
+            var arrayFilters = new[]
+            {
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("a.Id", albumId)),
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("s.Id", song.Id))
+            };
+
+            var updateOptions = new UpdateOptions { ArrayFilters = arrayFilters };
+
+            await _artistsCollection.UpdateOneAsync(filter, update, updateOptions);
         }
-
-
-
 
         public async Task DeleteSongAsync(string artistId, string albumId, string songId)
         {
             var filter = Builders<Artist>.Filter.And(
                 Builders<Artist>.Filter.Eq(a => a.Id, artistId),
-                Builders<Artist>.Filter.ElemMatch(a => a.albums, ab => ab.Id == albumId),
-                Builders<Artist>.Filter.ElemMatch(a => a.albums[-1].songs, s => s.Id == songId)
+                Builders<Artist>.Filter.ElemMatch(a => a.albums, ab => ab.Id == albumId)
             );
 
             var update = Builders<Artist>.Update.PullFilter("albums.$.songs", Builders<Song>.Filter.Eq(s => s.Id, songId));
@@ -99,7 +113,20 @@ namespace MusicApp.Services
             await _artistsCollection.UpdateOneAsync(filter, update);
         }
 
+        public async Task<Song> GetSongByTitleAsync(string songTitle)
+        {
+            var artist = await _artistsCollection.Find(a => a.albums.Any(album => album.songs.Any(song => song.title == songTitle))).FirstOrDefaultAsync();
+            if (artist == null) return null;
 
-
+            foreach (var album in artist.albums)
+            {
+                var song = album.songs.FirstOrDefault(s => s.title == songTitle);
+                if (song != null)
+                {
+                    return song;
+                }
+            }
+            return null;
+        }
     }
 }

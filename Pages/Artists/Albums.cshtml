@@ -12,13 +12,13 @@
         <li>
             <a asp-page="./AlbumDetails" asp-route-albumTitle="@album.title">@album.title</a>
             <span> | </span>
-            <a asp-page="./EditAlbum" asp-route-albumId="@album.Id">Edit</a>
+            <a asp-page="./EditAlbum" asp-route-id="@Model.Artist.Id" asp-route-id="@album.Id">Edit</a>
             <span> | </span>
-            <a asp-page="./DeleteAlbum" asp-route-albumId="@album.Id">Delete</a>
+            <a asp-page="./DeleteAlbum" asp-route-id="@Model.Artist.Id" asp-route-id="@album.Id">Delete</a>
         </li>
     }
 </ul>
 
 <div>
-    <a asp-page="./CreateAlbum">Create New Album</a>
+    <a asp-page="./CreateAlbum" asp-route-id="@Model.Artist.Id">Create New Album</a>
 </div>

@@ -4,7 +4,7 @@ using MusicApp.Models;
 using MusicApp.Services;
 using System.Threading.Tasks;
 
-namespace MusicApp.Pages.Albums
+namespace MusicApp.Pages.Artists
 {
     public class EditAlbumModel : PageModel
     {
@@ -13,18 +13,17 @@ namespace MusicApp.Pages.Albums
         [BindProperty]
         public Album Album { get; set; }
 
-        public string ArtistId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string AlbumId { get; set; }
 
         public EditAlbumModel(MongoDBService mongoDBService)
         {
             _mongoDBService = mongoDBService;
         }
 
-        public async Task<IActionResult> OnGetAsync(string artistId, string albumId)
+        public async Task<IActionResult> OnGetAsync()
         {
-            ArtistId = artistId;
-            var artist = await _mongoDBService.GetArtistAsync(artistId);
-            Album = artist?.albums.FirstOrDefault(a => a.Id == albumId);
+            Album = await _mongoDBService.GetAlbumByIdAsync(AlbumId);
 
             if (Album == null)
             {
@@ -34,16 +33,16 @@ namespace MusicApp.Pages.Albums
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string artistId, string albumId)
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            await _mongoDBService.UpdateAlbumAsync(artistId, Album);
+            await _mongoDBService.UpdateAlbumAsync(Album.Id, Album);
 
-            return RedirectToPage("/Artists/Details", new { id = artistId });
+            return RedirectToPage("/Artists/Albums", new { id = Album.Id });
         }
     }
 }

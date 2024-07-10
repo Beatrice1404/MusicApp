@@ -4,7 +4,7 @@ using MusicApp.Models;
 using MusicApp.Services;
 using System.Threading.Tasks;
 
-namespace MusicApp.Pages.Songs
+namespace MusicApp.Pages.Artists
 {
     public class DeleteSongModel : PageModel
     {
@@ -13,8 +13,14 @@ namespace MusicApp.Pages.Songs
         [BindProperty]
         public Song Song { get; set; }
 
-        public string ArtistId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string SongId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string AlbumId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string ArtistId { get; set; }
 
         public DeleteSongModel(MongoDBService mongoDBService)
         {
@@ -23,11 +29,8 @@ namespace MusicApp.Pages.Songs
 
         public async Task<IActionResult> OnGetAsync(string artistId, string albumId, string songId)
         {
-            ArtistId = artistId;
-            AlbumId = albumId;
-            var artist = await _mongoDBService.GetArtistAsync(artistId);
-            var album = artist?.albums.FirstOrDefault(a => a.Id == albumId);
-            Song = album?.songs.FirstOrDefault(s => s.Id == songId);
+            // Ob?ine song-ul pe care dore?ti s?-l ?tergi
+            Song = await _mongoDBService.GetSongByTitleAsync(songId);
 
             if (Song == null)
             {
@@ -41,7 +44,8 @@ namespace MusicApp.Pages.Songs
         {
             await _mongoDBService.DeleteSongAsync(artistId, albumId, songId);
 
-            return RedirectToPage("/Artists/Details", new { id = artistId });
+            return RedirectToPage("/Artists/AlbumDetails", new { artistId = artistId, albumTitle = Song.title });
         }
+
     }
 }
