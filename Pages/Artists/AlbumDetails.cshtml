@@ -11,6 +11,16 @@
 <ul>
     @foreach (var song in Model.Album.songs)
     {
-        <li>@song.title - @song.length</li>
+        <li>
+            @song.title - @song.length
+            <span> | </span>
+            <a asp-page="./EditSong" asp-route-songId="@song.Id">Edit</a>
+            <span> | </span>
+            <a asp-page="./DeleteSong" asp-route-songId="@song.Id">Delete</a>
+        </li>
     }
 </ul>
+
+<div>
+    <a asp-page="./CreateSong">Add New Song</a>
+</div>

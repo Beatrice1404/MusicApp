@@ -11,6 +11,14 @@
     {
         <li>
             <a asp-page="./Albums" asp-route-id="@artist.Id">@artist.name</a>
+            <span> | </span>
+            <a asp-page="./Edit" asp-route-id="@artist.Id">Edit</a>
+            <span> | </span>
+            <a asp-page="./Delete" asp-route-id="@artist.Id">Delete</a>
         </li>
     }
 </ul>
+
+<div>
+    <a asp-page="./Create">Create New Artist</a>
+</div>
