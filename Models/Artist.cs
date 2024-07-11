@@ -13,7 +13,7 @@ namespace MusicApp.Models
         public string name { get; set; }
 
         [BsonElement("albums")]
-        public List<Album> albums { get; set; }
+        public List<Album> albums { get; set; } = new List<Album>();
     }
 
     public class Album
@@ -27,9 +27,8 @@ namespace MusicApp.Models
         public string description { get; set; }
 
         [BsonElement("songs")]
-        public List<Song> songs { get; set; } = new List<Song>(); // Inițializează lista de cântece
+        public List<Song> songs { get; set; } = new List<Song>();
     }
-
 
     public class Song
     {

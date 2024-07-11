@@ -6,15 +6,41 @@
 
 <h1>Artists</h1>
 
+<div class="form-actions no-color">
+    <form method="get">
+        <p>
+            Caută după Nume Artist/Album/Cântec:
+            <input type="text" id="searchInput" name="currentFilter" value="@Model.CurrentFilter" autocomplete="off" />
+            <input type="submit" value="Caută" class="btn btn-primary" /> |
+            <a asp-page="./Index">Listă Completă</a>
+        </p>
+    </form>
+</div>
+
 <ul>
-    @foreach (var artist in Model.Artists)
+    @foreach (var result in Model.SearchResults)
     {
         <li>
-            <a asp-page="./Albums" asp-route-id="@artist.Id">@artist.name</a>
-            <span> | </span>
-            <a asp-page="./EditArtist" asp-route-id="@artist.Id">Edit</a>
-            <span> | </span>
-            <a asp-page="./DeleteArtist" asp-route-id="@artist.Id">Delete</a>
+            @if (result is MusicApp.Models.ArtistSearchResult artistResult)
+            {
+                <a asp-page="./Albums" asp-route-id="@artistResult.Artist.Id">@artistResult.Artist.name</a>
+                <span> | </span>
+                <a asp-page="./EditArtist" asp-route-id="@artistResult.Artist.Id">Edit</a>
+                <span> | </span>
+                <a asp-page="./DeleteArtist" asp-route-id="@artistResult.Artist.Id">Delete</a>
+            }
+            else if (result is MusicApp.Models.SongSearchResult songResult)
+            {
+                <a asp-page="./Songs" asp-route-id="@songResult.Song.Id">@songResult.Song.title</a>
+                <span> | </span>
+                <span>@songResult.Song.length</span>
+            }
+            else if (result is MusicApp.Models.AlbumSearchResult albumResult)
+            {
+                <a asp-page="./Albums" asp-route-id="@albumResult.Album.Id">@albumResult.Album.title</a>
+                <span> | </span>
+                <span>@albumResult.Album.description</span>
+            }
         </li>
     }
 </ul>

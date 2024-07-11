@@ -31,6 +31,8 @@ namespace MusicApp.Pages.Artists
             await _mongoDBService.AddAlbumAsync(ArtistId, Album);
 
             return RedirectToPage("/Artists/Albums", new { id = ArtistId });
+            
+            
         }
     }
 }
