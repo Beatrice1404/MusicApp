@@ -13,15 +13,6 @@
     {
         <li>
             @song.title - @song.length
-            <span> | </span>
-            <a asp-page="./EditSong" asp-route-id="@Model.Album.Id"  asp-route-id="@song.Id">Edit</a>
-            <span> | </span>
-            <a asp-page="./DeleteSong" asp-route-id="@Model.Album.Id"  asp-route-id="@song.Id">Delete</a>
-
         </li>
     }
 </ul>
-
-<div>
-    <a asp-page="./CreateSong" asp-route-id="@Model.Album.Id" >Add New Song</a>
-</div>

@@ -14,6 +14,9 @@ namespace MusicApp.Pages.Artists
         public Album Album { get; set; }
 
         [BindProperty(SupportsGet = true)]
+        public string ArtistId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public string AlbumId { get; set; }
 
         public EditAlbumModel(MongoDBService mongoDBService)
@@ -21,16 +24,11 @@ namespace MusicApp.Pages.Artists
             _mongoDBService = mongoDBService;
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync(string artistId, string albumId)
         {
-            Album = await _mongoDBService.GetAlbumByIdAsync(AlbumId);
-
-            if (Album == null)
-            {
-                return NotFound();
-            }
-
-            return Page();
+            ArtistId = artistId;
+            AlbumId = albumId;
+            Album = await _mongoDBService.GetAlbumByIdAsync(albumId);
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -40,9 +38,9 @@ namespace MusicApp.Pages.Artists
                 return Page();
             }
 
-            await _mongoDBService.UpdateAlbumAsync(Album.Id, Album);
+            await _mongoDBService.UpdateAlbumAsync(AlbumId, Album);
 
-            return RedirectToPage("/Artists/Albums", new { id = Album.Id });
+            return RedirectToPage("/Artists/Albums", new { id = ArtistId });
         }
     }
 }

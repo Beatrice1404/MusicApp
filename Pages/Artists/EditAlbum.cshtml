@@ -9,7 +9,45 @@
 <form method="post">
     <div class="form-group">
         <label for="title">Title</label>
-        <input type="text" class="form-control" id="title" name="title" value="@Model.Album.title" />
+        <input type="text" class="form-control" id="title" name="Album.title" value="@Model.Album.title" />
     </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" class="form-control" id="description" name="Album.description" value="@Model.Album.description" />
+    </div>
+
+    <h2>Songs</h2>
+    <div id="songs-list">
+        @for (int i = 0; i < Model.Album.songs.Count; i++)
+        {
+            <div class="song-item">
+                <label for="song-title-@i">Title</label>
+                <input type="text" class="form-control" id="song-title-@i" name="Album.songs[@i].title" value="@Model.Album.songs[i].title" />
+                <label for="song-length-@i">Length</label>
+                <input type="text" class="form-control" id="song-length-@i" name="Album.songs[@i].length" value="@Model.Album.songs[i].length" />
+            </div>
+        }
+    </div>
+    <button type="button" class="btn btn-secondary" onclick="addSong()">Add Song</button>
+
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
+
+@section Scripts {
+    <script type="text/javascript">
+        let songIndex = @Model.Album.songs.Count;
+        function addSong() {
+            const songList = document.getElementById('songs-list');
+            const songItem = document.createElement('div');
+            songItem.classList.add('song-item');
+            songItem.innerHTML = `
+                        <label for="song-title-${songIndex}">Title</label>
+                        <input type="text" class="form-control" id="song-title-${songIndex}" name="Album.songs[${songIndex}].title" />
+                        <label for="song-length-${songIndex}">Length</label>
+                        <input type="text" class="form-control" id="song-length-${songIndex}" name="Album.songs[${songIndex}].length" />
+                    `;
+            songList.appendChild(songItem);
+            songIndex++;
+        }
+    </script>
+}

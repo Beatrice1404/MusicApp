@@ -27,8 +27,9 @@ namespace MusicApp.Models
         public string description { get; set; }
 
         [BsonElement("songs")]
-        public List<Song> songs { get; set; }
+        public List<Song> songs { get; set; } = new List<Song>(); // Inițializează lista de cântece
     }
+
 
     public class Song
     {

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MusicApp.Models;
 using MusicApp.Services;
@@ -10,26 +9,23 @@ namespace MusicApp.Pages.Artists
     {
         private readonly MongoDBService _mongoDBService;
 
+        public Album Album { get; set; }
+
+        public string ArtistId { get; set; } // Ad?ug?m ArtistId ca proprietate
+
         public AlbumDetailsModel(MongoDBService mongoDBService)
         {
             _mongoDBService = mongoDBService;
         }
 
-        [BindProperty(SupportsGet = true)]
-        public string AlbumTitle { get; set; }
-
-        public Album Album { get; set; }
-
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync(string albumTitle)
         {
-            Album = await _mongoDBService.GetAlbumByTitleAsync(AlbumTitle);
-
-            if (Album == null)
+            var artist = await _mongoDBService.GetArtistByAlbumTitleAsync(albumTitle);
+            if (artist != null)
             {
-                return NotFound();
+                ArtistId = artist.Id;
+                Album = artist.albums.FirstOrDefault(a => a.title == albumTitle);
             }
-
-            return Page();
         }
     }
 }

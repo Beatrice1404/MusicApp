@@ -4,12 +4,47 @@
     ViewData["Title"] = "Create Album";
 }
 
-<h1>Create Album for @Model.Artist.name</h1>
+<h1>Create Album</h1>
 
 <form method="post">
     <div class="form-group">
         <label for="title">Title</label>
         <input type="text" class="form-control" id="title" name="Album.title" />
     </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" class="form-control" id="description" name="Album.description" />
+    </div>
+
+    <h2>Songs</h2>
+    <div id="songs-list">
+        <div class="song-item">
+            <label for="song-title-0">Title</label>
+            <input type="text" class="form-control" id="song-title-0" name="Album.songs[0].title" />
+            <label for="song-length-0">Length</label>
+            <input type="text" class="form-control" id="song-length-0" name="Album.songs[0].length" />
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary" onclick="addSong()">Add Song</button>
+
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
+
+@section Scripts {
+    <script type="text/javascript">
+        let songIndex = 1;
+        function addSong() {
+            const songList = document.getElementById('songs-list');
+            const songItem = document.createElement('div');
+            songItem.classList.add('song-item');
+            songItem.innerHTML = `
+                <label for="song-title-${songIndex}">Title</label>
+                <input type="text" class="form-control" id="song-title-${songIndex}" name="Album.songs[${songIndex}].title" />
+                <label for="song-length-${songIndex}">Length</label>
+                <input type="text" class="form-control" id="song-length-${songIndex}" name="Album.songs[${songIndex}].length" />
+            `;
+            songList.appendChild(songItem);
+            songIndex++;
+        }
+    </script>
+}
