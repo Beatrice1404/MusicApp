@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using MusicApp.Models;
 using MusicApp.Services;
 
 namespace MusicApp.Pages.Artists
 {
-    public class IndexModel : PageModel
+    public class IndexModel : BasePageModel
     {
         private readonly MongoDBService _mongoDBService;
 
         public List<ISearchableItem> SearchResults { get; set; } = new List<ISearchableItem>();
-        public string CurrentFilter { get; set; }
 
         public IndexModel(MongoDBService mongoDBService)
         {
@@ -26,6 +23,7 @@ namespace MusicApp.Pages.Artists
 
             if (string.IsNullOrEmpty(CurrentFilter))
             {
+                // If there's no filter, you can decide to show all artists or nothing.
                 var artists = await _mongoDBService.GetAsync();
                 SearchResults = new List<ISearchableItem>(artists.Select(a => new ArtistSearchResult { Artist = a }));
                 return;

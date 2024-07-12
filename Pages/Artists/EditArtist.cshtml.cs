@@ -37,7 +37,15 @@ namespace MusicApp.Pages.Artists
                 return Page();
             }
 
-            await _mongoDBService.UpdateArtistAsync(id, Artist);
+            var existingArtist = await _mongoDBService.GetArtistAsync(id);
+            if (existingArtist == null)
+            {
+                return NotFound();
+            }
+
+            existingArtist.name = Artist.name; 
+
+            await _mongoDBService.UpdateArtistAsync(id, existingArtist);
 
             return RedirectToPage("/Artists/Index");
         }

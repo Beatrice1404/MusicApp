@@ -1,21 +1,10 @@
 ﻿@page "/"
 @model MusicApp.Pages.Artists.IndexModel
 @{
-    ViewData["Title"] = "Artists";
+    ViewData["Title"] = "Search Results";
 }
 
-<h1>Artists</h1>
-
-<div class="form-actions no-color">
-    <form method="get">
-        <p>
-            Caută după Nume Artist/Album/Cântec:
-            <input type="text" id="searchInput" name="currentFilter" value="@Model.CurrentFilter" autocomplete="off" />
-            <input type="submit" value="Caută" class="btn btn-primary" /> |
-            <a asp-page="./Index">Listă Completă</a>
-        </p>
-    </form>
-</div>
+<h1>Search Results</h1>
 
 <ul>
     @foreach (var result in Model.SearchResults)
